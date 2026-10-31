@@ -1,0 +1,1135 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Administrativo de Terceros - Universidad El Bosque</title>
+  <!-- Tailwind CSS & Font Awesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Tipografía estándar Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* Layout inspirado en Nebular/ngx-admin (https://demo.akveo.com/ngx-admin/pages/dashboard),
+       con la identidad real de Universidad El Bosque: naranja institucional como acento primario
+       y verde oscuro institucional en header/sidebar, en vez del azul/navy genérico de la plantilla. */
+    :root {
+      --color-primary: #FD7519;
+      --color-primary-dark: #e4660f;
+      --color-success: #00D68F;
+      --color-success-dark: #00b383;
+      --color-warning: #FFAA00;
+      --color-warning-dark: #db9200;
+      --color-danger: #FF3D71;
+      --color-danger-dark: #db2c5c;
+      --color-navy: #012820;
+      --color-navy-light: #0d3b30;
+      --color-text: #222B45;
+      --color-hint: #8F9BB3;
+      --color-border: #E4E9F2;
+      --color-bg: #F7F9FC;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    .brand-primary {
+      color: var(--color-primary);
+    }
+
+    .bg-brand-primary {
+      background-color: var(--color-primary);
+    }
+
+    .bg-brand-primary:hover {
+      background-color: var(--color-primary-dark);
+    }
+
+    .btn-success-inst {
+      background-color: var(--color-success);
+      color: #ffffff;
+    }
+
+    .btn-success-inst:hover {
+      background-color: var(--color-success-dark);
+    }
+
+    .btn-danger-inst {
+      background-color: var(--color-danger);
+      color: #ffffff;
+    }
+
+    .btn-danger-inst:hover {
+      background-color: var(--color-danger-dark);
+    }
+
+    .nav-link-hover:hover {
+      color: var(--color-primary);
+    }
+
+    /* Tabs tipo underline (estilo nb-tabset de Nebular) */
+    .tab-filtro {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-hint);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0 2px 10px 2px;
+      cursor: pointer;
+      transition: color .15s, border-color .15s;
+    }
+
+    .tab-filtro:hover {
+      color: var(--color-text);
+    }
+
+    .tab-filtro.activo {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .tab-filtro:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    /* Menú del sidebar (estilo plantilla administrativa Nebular) */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      transition: all .15s;
+      cursor: pointer;
+    }
+
+    .nav-item i {
+      width: 16px;
+      text-align: center;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+    }
+
+    .nav-item.activo {
+      background: rgba(253, 117, 25, 0.22);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: inset 3px 0 0 0 var(--color-primary);
+    }
+
+    .nav-subitem {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      transition: all .15s;
+      cursor: pointer;
+    }
+
+    .nav-subitem:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+    }
+
+    .nav-subitem.activo {
+      background: rgba(253, 117, 25, 0.16);
+      color: #ffffff;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen relative">
+
+  <!-- ============================= LOGIN (ficticio: cualquier usuario/contraseña entra) ============================= -->
+  <div id="pantalla-login" class="min-h-screen flex items-center justify-center p-4" style="background: var(--color-navy);">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-8 space-y-6">
+      <div class="flex flex-col items-center gap-3">
+        <img src="./assets/logo.svg" alt="Universidad El Bosque" class="w-16 h-16 object-contain"
+          onerror="this.src='https://www.unbosque.edu.co/sites/default/files/logo-universidad-el-bosque.png'">
+        <div class="text-center">
+          <p class="text-sm font-bold" style="color: var(--color-text);">Panel Administrativo Contabilidad</p>
+          <p class="text-[11px]" style="color: var(--color-hint);">Universidad El Bosque</p>
+        </div>
+      </div>
+      <form onsubmit="iniciarSesion(event)" class="space-y-4">
+        <div>
+          <label for="login-usuario" class="text-[11px] font-medium block mb-1" style="color: var(--color-hint);">Usuario institucional</label>
+          <input id="login-usuario" type="text" required value="Gladys Pasaje" autocomplete="username"
+            class="w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)]/30"
+            style="border: 1px solid var(--color-border); color: var(--color-text);">
+        </div>
+        <div>
+          <label for="login-clave" class="text-[11px] font-medium block mb-1" style="color: var(--color-hint);">Contraseña</label>
+          <input id="login-clave" type="password" required value="123456" autocomplete="current-password"
+            class="w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)]/30"
+            style="border: 1px solid var(--color-border); color: var(--color-text);">
+        </div>
+        <button type="submit"
+          class="w-full py-2.5 text-sm font-semibold rounded-lg text-white active:scale-[0.98] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+          style="background: var(--color-primary); --tw-ring-color: var(--color-primary);">
+          Iniciar sesión
+        </button>
+      </form>
+      <p class="text-center text-[10px]" style="color: var(--color-hint);">Demo: cualquier usuario y contraseña funcionan.</p>
+    </div>
+  </div>
+
+  <!-- ============================= APP (oculta hasta iniciar sesión) ============================= -->
+  <div id="app" class="hidden min-h-screen pb-16 relative">
+
+  <!-- Overlay para cerrar el sidebar en móvil -->
+  <div id="overlay-sidebar" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+
+  <!-- ============================= HEADER (ancho completo, estilo ngx-admin) ============================= -->
+  <header class="fixed top-0 inset-x-0 h-16 z-50 flex items-center gap-3 px-4" style="background: var(--color-navy);">
+    <button onclick="toggleSidebar()" aria-label="Abrir menú de navegación"
+      class="w-9 h-9 flex items-center justify-center rounded-lg text-white/80 hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="flex items-center gap-2.5">
+      <img src="./assets/logo.svg" alt="Universidad El Bosque" class="w-8 h-8 object-contain bg-white rounded-md p-1"
+        onerror="this.src='https://www.unbosque.edu.co/sites/default/files/logo-universidad-el-bosque.png'">
+      <span class="text-white font-bold text-sm hidden sm:inline tracking-tight">Panel Administrativo Contabilidad</span>
+    </div>
+
+    <div class="flex-1"></div>
+
+    <div class="flex items-center gap-1 text-white/70">
+      <span class="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors cursor-default">
+        <i class="fa-regular fa-bell"></i>
+        <span class="absolute top-1.5 right-2 w-1.5 h-1.5 rounded-full" style="background: var(--color-danger);"></span>
+      </span>
+    </div>
+
+    <div class="flex items-center gap-2 border-l border-white/10 pl-3 ml-1">
+      <div class="text-right hidden sm:block leading-tight">
+        <p class="text-white text-xs font-semibold" id="header-nombre-usuario">Gladys Pasaje</p>
+        <p class="text-white/40 text-[10px]">Administradora</p>
+      </div>
+      <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
+        style="background: var(--color-primary);" id="header-iniciales-usuario">GP</div>
+      <button onclick="cerrarSesion()" aria-label="Cerrar sesión" title="Cerrar sesión"
+        class="w-8 h-8 flex items-center justify-center rounded-lg text-white/60 hover:bg-white/10 hover:text-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================= SIDEBAR ============================= -->
+  <aside id="sidebar"
+    class="fixed top-16 left-0 bottom-0 w-64 lg:w-64 z-50 flex flex-col -translate-x-full lg:translate-x-0 transition-all duration-200"
+    style="background: var(--color-navy);">
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <p class="sidebar-label text-[10px] uppercase tracking-wide text-white/30 px-3 mb-2">Gestión</p>
+
+      <button onclick="manejarClicGrupoTerceros()" aria-expanded="true" aria-controls="submenu-terceros"
+        class="nav-item w-full justify-between cursor-pointer">
+        <span class="flex items-center gap-2.5">
+          <i class="fa-solid fa-user-check"></i>
+          <span class="sidebar-label">Gestión solicitud tercero</span>
+        </span>
+        <i id="icono-submenu-terceros" class="sidebar-label fa-solid fa-chevron-down text-[10px] transition-transform"></i>
+      </button>
+      <div id="submenu-terceros" class="sidebar-label pl-7 pr-1 pt-1 pb-1 space-y-1">
+        <a href="#" class="nav-subitem activo" onclick="event.preventDefault()">
+          <i class="fa-solid fa-circle text-[5px]"></i>
+          <span>Aprobar / rechazar solicitudes</span>
+        </a>
+        <!-- Futuro módulo hermano: "Trasladar solicitudes" (envío a otro sistema) iría aquí como otro .nav-subitem -->
+
+      </div>
+      <!-- Los próximos módulos del sistema (ej. gestión de usuarios, reportes, etc.)
+           se agregan aquí como nuevos grupos .nav-item + submenú -->
+    </nav>
+    <button onclick="toggleColapsoSidebar()" aria-label="Colapsar menú"
+      class="hidden lg:flex items-center justify-center gap-2 mx-3 mb-1 py-2 rounded-lg text-white/50 hover:bg-white/10 hover:text-white transition-colors cursor-pointer text-[11px] font-medium shrink-0">
+      <i id="icono-colapsar-sidebar" class="fa-solid fa-angles-left"></i>
+      <span class="sidebar-label">Colapsar menú</span>
+    </button>
+    <div class="sidebar-label px-4 py-3 border-t border-white/10 text-[10px] text-white/30 shrink-0 leading-tight">
+      <p class="text-white/50 font-semibold">Universidad El Bosque</p>
+      <p>Sistema de gestión · UEB</p>
+    </div>
+  </aside>
+
+  <!-- ============================= CONTENIDO ============================= -->
+  <div id="area-contenido" class="pt-16 lg:pl-64 transition-[padding] duration-200">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 mt-8 space-y-6">
+
+    <!-- ============================= VISTA: LISTA ============================= -->
+    <div id="vista-lista" class="space-y-6 transition-opacity duration-200">
+      <div>
+        <p class="text-[11px] font-medium mb-1.5 flex items-center gap-1.5" style="color: var(--color-hint);">
+          <i class="fa-solid fa-house text-[10px]"></i> Gestión solicitud tercero / Aprobar-rechazar
+        </p>
+        <h1 class="text-2xl font-bold flex items-center gap-2" style="color: var(--color-text);">
+          <i class="fa-solid fa-clipboard-check brand-primary"></i>
+          Aprobar / rechazar solicitudes
+        </h1>
+        <p class="text-sm mt-1" style="color: var(--color-hint);">Revisa, aprueba o rechaza las solicitudes de registro.</p>
+      </div>
+
+      <!-- KPIs -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="contenedor-kpis"></div>
+
+      <!-- Tarjeta contenedora: filtros + tabla (patrón de "card" de Nebular) -->
+      <div class="bg-white rounded-xl shadow-sm p-5 space-y-5" style="border: 1px solid var(--color-border);">
+
+        <!-- Tabs por estado -->
+        <div class="flex flex-wrap items-center gap-6" style="border-bottom: 1px solid var(--color-border);" id="tabs-filtro">
+          <button class="tab-filtro activo" data-estado="REGISTRADO" onclick="filtrarPor('REGISTRADO')">
+            Pendientes <span class="opacity-70" data-contador="REGISTRADO">(0)</span>
+          </button>
+          <button class="tab-filtro" data-estado="APROBADO" onclick="filtrarPor('APROBADO')">
+            Aprobadas <span class="opacity-70" data-contador="APROBADO">(0)</span>
+          </button>
+          <button class="tab-filtro" data-estado="RECHAZADO" onclick="filtrarPor('RECHAZADO')">
+            Rechazadas <span class="opacity-70" data-contador="RECHAZADO">(0)</span>
+          </button>
+          <button class="tab-filtro" data-estado="" onclick="filtrarPor('')">
+            Todas <span class="opacity-70" data-contador="TODAS">(0)</span>
+          </button>
+        </div>
+
+        <!-- Buscador + filtro de fecha -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div class="relative w-full md:w-72">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs" style="color: var(--color-hint);"></i>
+            <input id="input-busqueda" type="text" placeholder="Buscar por nombre o documento..." oninput="onBuscar()"
+              aria-label="Buscar por nombre o documento"
+              class="w-full bg-white rounded-lg pl-9 pr-3 py-2.5 text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)]/30"
+              style="border: 1px solid var(--color-border); color: var(--color-text);">
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2">
+              <label for="input-fecha-desde" class="text-[11px] font-medium" style="color: var(--color-hint);">Desde</label>
+              <input id="input-fecha-desde" type="date" oninput="onCambiarFecha()"
+                class="bg-white rounded-lg px-3 py-2 text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)]/30"
+                style="border: 1px solid var(--color-border); color: var(--color-text);">
+            </div>
+            <div class="flex items-center gap-2">
+              <label for="input-fecha-hasta" class="text-[11px] font-medium" style="color: var(--color-hint);">Hasta</label>
+              <input id="input-fecha-hasta" type="date" oninput="onCambiarFecha()"
+                class="bg-white rounded-lg px-3 py-2 text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)]/30"
+                style="border: 1px solid var(--color-border); color: var(--color-text);">
+            </div>
+            <button onclick="limpiarFiltroFecha()" class="text-[11px] font-medium hover:underline cursor-pointer" style="color: var(--color-primary);">
+              Limpiar fechas
+            </button>
+          </div>
+        </div>
+
+        <!-- Tarjetas de solicitudes (móvil) -->
+        <div id="tarjetas-tabla-movil" class="md:hidden space-y-3"></div>
+
+        <!-- Tabla de solicitudes (md en adelante) -->
+        <div class="hidden md:block rounded-lg overflow-hidden" style="border: 1px solid var(--color-border);">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead style="background: var(--color-bg); border-bottom: 1px solid var(--color-border);">
+                <tr class="text-left text-[11px] uppercase tracking-wide" style="color: var(--color-hint);">
+                  <th class="px-4 py-3 font-semibold">Nombre</th>
+                  <th class="px-4 py-3 font-semibold">Identificación</th>
+                  <th class="px-4 py-3 font-semibold">Calidad</th>
+                  <th class="px-4 py-3 font-semibold">Tipo</th>
+                  <th class="px-4 py-3 font-semibold">Fecha</th>
+                  <th class="px-4 py-3 font-semibold">Estado</th>
+                  <th class="px-4 py-3 font-semibold text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpo-tabla" class="divide-y" style="border-color: var(--color-border);"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex items-center justify-between flex-wrap gap-3" id="contenedor-paginacion"></div>
+      </div>
+    </div>
+
+    <!-- ============================= VISTA: DETALLE ============================= -->
+    <div id="vista-detalle" class="space-y-6 hidden transition-opacity duration-200">
+      <div>
+        <p class="text-[11px] font-medium mb-1.5 flex items-center gap-1.5" style="color: var(--color-hint);">
+          <i class="fa-solid fa-house text-[10px]"></i> Gestión solicitud tercero / Aprobar-rechazar / Detalle
+        </p>
+        <button onclick="volverALista()"
+          class="text-xs nav-link-hover flex items-center gap-1.5 font-medium transition-colors cursor-pointer mb-3"
+          style="color: var(--color-hint);">
+          <i class="fa-solid fa-arrow-left"></i> Volver a la lista
+        </button>
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h1 class="text-2xl font-bold flex items-center gap-2" id="detalle-nombre" style="color: var(--color-text);">
+            <i class="fa-solid fa-user brand-primary"></i>
+          </h1>
+          <span id="detalle-badge-estado" class="text-xs font-semibold px-3 py-1 rounded-full"></span>
+        </div>
+      </div>
+
+      <!-- Motivo de rechazo -->
+      <div id="detalle-motivo-rechazo" class="hidden rounded-xl p-4 text-sm"
+        style="background: #FFE4EA; color: #C41E54; border: 1px solid #FFC2D6;">
+        <span class="font-semibold">Motivo del rechazo:</span> <span id="detalle-motivo-texto"></span>
+      </div>
+
+      <!-- Datos del solicitante -->
+      <div class="bg-white rounded-xl p-6 md:p-8 shadow-sm" style="border: 1px solid var(--color-border);">
+        <h2 class="text-base font-bold mb-4 flex items-center gap-2" style="color: var(--color-text);">
+          <i class="fa-solid fa-id-card" style="color: var(--color-success);"></i> Información del solicitante
+        </h2>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm" id="detalle-campos"></dl>
+      </div>
+
+      <!-- Documentos -->
+      <div class="bg-white rounded-xl p-6 md:p-8 shadow-sm" style="border: 1px solid var(--color-border);">
+        <h2 class="text-base font-bold mb-4 flex items-center gap-2" style="color: var(--color-text);">
+          <i class="fa-solid fa-folder-open" style="color: var(--color-success);"></i> Documentos
+        </h2>
+        <div id="detalle-documentos" class="space-y-3"></div>
+      </div>
+
+      <!-- Acciones -->
+      <div id="detalle-acciones" class="bg-white rounded-xl p-4 shadow-sm flex items-center justify-end gap-3"
+        style="border: 1px solid var(--color-border);">
+        <button id="btn-detalle-rechazar" onclick="abrirModalRechazar()"
+          class="px-5 py-2.5 bg-white text-xs font-semibold rounded-lg active:scale-[0.98] transition-all cursor-pointer flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2"
+          style="border: 1px solid #FFC2D6; color: var(--color-danger); --tw-ring-color: #FFC2D6;">
+          <i class="fa-solid fa-circle-xmark"></i> Rechazar
+        </button>
+        <button id="btn-detalle-aprobar" onclick="abrirModalAprobar()"
+          class="px-5 py-2.5 btn-success-inst text-xs font-semibold rounded-lg active:scale-[0.98] transition-all shadow-sm cursor-pointer flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+          <i class="fa-solid fa-circle-check"></i> Aprobar
+        </button>
+      </div>
+    </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRMAR APROBACIÓN -->
+  <div id="modal-aprobar" onclick="if (event.target === this) cerrarModalAprobar()"
+    class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-xs">
+    <div class="modal-card bg-white rounded-xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4 transition-all duration-150 scale-95 opacity-0"
+      style="border: 1px solid var(--color-border);">
+      <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto text-xl"
+        style="background: #DEF8EC; color: var(--color-success-dark);">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <h3 class="text-base font-bold" style="color: var(--color-text);">¿Aprobar esta solicitud?</h3>
+      <p class="text-xs" style="color: var(--color-hint);">Se le enviará un correo de confirmación al tercero.</p>
+      <div class="flex gap-3 pt-2">
+        <button onclick="cerrarModalAprobar()"
+          class="flex-1 px-4 py-2.5 bg-white text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+          style="border: 1px solid var(--color-border); color: var(--color-text);">
+          Cancelar
+        </button>
+        <button onclick="confirmarAprobar()" id="btn-confirmar-aprobar"
+          class="flex-1 px-4 py-2.5 btn-success-inst text-xs font-semibold rounded-lg active:scale-[0.98] transition-all shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+          Sí, aprobar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: RECHAZAR (pide motivo) -->
+  <div id="modal-rechazar" onclick="if (event.target === this) cerrarModalRechazar()"
+    class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden backdrop-blur-xs">
+    <div class="modal-card bg-white rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4 transition-all duration-150 scale-95 opacity-0"
+      style="border: 1px solid var(--color-border);">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg shrink-0"
+          style="background: #FFE4EA; color: var(--color-danger-dark);">
+          <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold" style="color: var(--color-text);">Rechazar solicitud</h3>
+          <p class="text-xs" style="color: var(--color-hint);">El motivo se le envía al tercero por correo.</p>
+        </div>
+      </div>
+      <div>
+        <label for="input-motivo-rechazo" class="sr-only">Motivo del rechazo</label>
+        <textarea id="input-motivo-rechazo" rows="3" placeholder="Ej. La cédula adjunta no coincide con el nombre del formulario."
+          class="w-full bg-white rounded-lg px-3 py-2.5 text-xs focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-primary)]/30 resize-none"
+          style="border: 1px solid var(--color-border); color: var(--color-text);"></textarea>
+        <p id="err-motivo-rechazo" class="text-[11px] mt-1 hidden" style="color: var(--color-danger);">Escribe un motivo.</p>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button onclick="cerrarModalRechazar()"
+          class="flex-1 px-4 py-2.5 bg-white text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+          style="border: 1px solid var(--color-border); color: var(--color-text);">
+          Cancelar
+        </button>
+        <button onclick="confirmarRechazar()" id="btn-confirmar-rechazar"
+          class="flex-1 px-4 py-2.5 btn-danger-inst text-xs font-semibold rounded-lg active:scale-[0.98] transition-all shadow-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300">
+          Sí, rechazar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VISOR DE DOCUMENTO -->
+  <div id="modal-documento" onclick="if (event.target === this) cerrarModalDocumento()"
+    class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden backdrop-blur-xs">
+    <div class="modal-card bg-white rounded-xl w-full max-w-3xl h-[85vh] shadow-2xl flex flex-col transition-all duration-150 scale-95 opacity-0"
+      style="border: 1px solid var(--color-border);">
+      <div class="flex items-center justify-between gap-3 px-5 py-3 shrink-0" style="border-bottom: 1px solid var(--color-border);">
+        <div class="flex items-center gap-2 min-w-0">
+          <i class="fa-solid fa-file-pdf" style="color: var(--color-danger);"></i>
+          <span id="documento-nombre" class="text-sm font-semibold truncate" style="color: var(--color-text);"></span>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <a id="documento-abrir-nueva-pestana" href="#" target="_blank" rel="noopener"
+            class="px-3 py-1.5 bg-white text-[11px] font-semibold rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5"
+            style="border: 1px solid var(--color-border); color: var(--color-text);">
+            <i class="fa-solid fa-up-right-from-square"></i> Abrir en pestaña nueva
+          </a>
+          <button onclick="cerrarModalDocumento()" aria-label="Cerrar visor de documento"
+            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+            style="color: var(--color-hint);">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      <div class="flex-1 bg-gray-50 rounded-b-xl overflow-hidden">
+        <iframe id="documento-iframe" src="" title="Vista previa del documento" class="w-full h-full border-0"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2 w-[calc(100%-2rem)] max-w-xs" aria-live="polite"></div>
+
+  </div><!-- /#app -->
+
+  <script>
+    "use strict";
+
+    const API_BASE_URL = 'https://ms-tercero-api.bluesea-2df0ebb2.belgiumcentral.azurecontainerapps.io';
+
+    const $ = (id) => document.getElementById(id);
+
+    const TAMANO_PAGINA = 8;
+
+    let registrosCompletos = [];
+    let filtroActual = 'REGISTRADO';
+    let terminoBusqueda = '';
+    let fechaDesde = '';
+    let fechaHasta = '';
+    let paginaActual = 1;
+    let registroSeleccionadoId = null;
+
+    const ETIQUETA_ESTADO = { REGISTRADO: 'Pendiente', APROBADO: 'Aprobada', RECHAZADO: 'Rechazada' };
+    const CLASE_BADGE_ESTADO = {
+      REGISTRADO: 'bg-[#FFF3DA] text-[#9A6700]',
+      APROBADO: 'bg-[#DEF8EC] text-[#00824C]',
+      RECHAZADO: 'bg-[#FFE4EA] text-[#C41E54]'
+    };
+
+    const CAMPOS_DETALLE = [
+      ['calidad', 'Calidad'], ['tipoPersona', 'Tipo de persona'], ['nacionalidad', 'Nacionalidad'],
+      ['correo', 'Correo'], ['cedula', 'Cédula'], ['fechaExpedicionCedula', 'Expedición cédula'],
+      ['nit', 'NIT'], ['celular', 'Celular'], ['lugarNacimiento', 'Lugar de nacimiento'],
+      ['paisNacimiento', 'País de nacimiento'], ['direccion', 'Dirección'], ['fechaRegistro', 'Fecha de registro']
+    ];
+
+    function escaparHtml(valor) {
+      const div = document.createElement('div');
+      div.textContent = valor ?? '';
+      return div.innerHTML;
+    }
+
+    // Para interpolar valores dentro de atributos onclick="...('valor')": escapa backslashes y
+    // comillas simples para que un nombre de archivo con comillas no rompa el HTML generado.
+    function escaparJs(valor) {
+      return String(valor ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    function formatearFecha(iso) {
+      if (!iso) return '-';
+      try { return new Date(iso).toLocaleString('es-CO'); } catch { return iso; }
+    }
+
+    function toggleSidebar() {
+      $('sidebar').classList.toggle('-translate-x-full');
+      $('overlay-sidebar').classList.toggle('hidden');
+    }
+
+    // ----------------------------- SESIÓN (ficticia: solo para la demo visual) -----------------------------
+
+    const CLAVE_SESION = 'ueb-admin-usuario';
+
+    function obtenerUsuarioSesion() {
+      try { return localStorage.getItem(CLAVE_SESION); } catch { return null; }
+    }
+
+    function capitalizar(nombre) {
+      return nombre.trim().split(/\s+/)
+        .map((palabra) => palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase())
+        .join(' ');
+    }
+
+    function iniciales(nombre) {
+      const partes = nombre.trim().split(/\s+/).slice(0, 2);
+      const letras = partes.map((p) => p[0]?.toUpperCase() ?? '').join('');
+      return letras || 'U';
+    }
+
+    function mostrarApp(nombreUsuario) {
+      const nombreFormateado = capitalizar(nombreUsuario);
+      $('pantalla-login').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      $('header-nombre-usuario').textContent = nombreFormateado;
+      $('header-iniciales-usuario').textContent = iniciales(nombreFormateado);
+      cargarTodo();
+    }
+
+    function iniciarSesion(evento) {
+      evento.preventDefault();
+      const usuario = $('login-usuario').value.trim();
+      if (!usuario) return;
+      try { localStorage.setItem(CLAVE_SESION, usuario); } catch { /* localStorage no disponible: la sesión no persiste, pero igual se entra */ }
+      mostrarApp(usuario);
+    }
+
+    function cerrarSesion() {
+      try { localStorage.removeItem(CLAVE_SESION); } catch { /* ídem */ }
+      $('app').classList.add('hidden');
+      $('pantalla-login').classList.remove('hidden');
+      $('login-usuario').value = '';
+      $('login-clave').value = '';
+      $('login-usuario').focus();
+    }
+
+    (function inicializarSesion() {
+      const usuario = obtenerUsuarioSesion();
+      if (usuario) mostrarApp(usuario);
+    })();
+
+    function toggleSubmenu(idSubmenu) {
+      const submenu = $(idSubmenu);
+      const boton = document.querySelector(`[aria-controls="${idSubmenu}"]`);
+      const abierto = !submenu.classList.contains('hidden');
+
+      submenu.classList.toggle('hidden');
+      boton.setAttribute('aria-expanded', String(!abierto));
+      $('icono-submenu-terceros').classList.toggle('rotate-180');
+    }
+
+    let sidebarColapsado = false;
+
+    function manejarClicGrupoTerceros() {
+      // Con el sidebar colapsado (solo íconos) el clic en el grupo lo vuelve a expandir
+      // en vez de intentar abrir un submenú que no se puede leer.
+      if (sidebarColapsado) {
+        toggleColapsoSidebar();
+        return;
+      }
+      toggleSubmenu('submenu-terceros');
+    }
+
+    function toggleColapsoSidebar() {
+      sidebarColapsado = !sidebarColapsado;
+
+      $('sidebar').classList.toggle('lg:w-16', sidebarColapsado);
+      $('sidebar').classList.toggle('lg:w-64', !sidebarColapsado);
+      $('area-contenido').classList.toggle('lg:pl-16', sidebarColapsado);
+      $('area-contenido').classList.toggle('lg:pl-64', !sidebarColapsado);
+
+      document.querySelectorAll('.sidebar-label').forEach((el) => el.classList.toggle('lg:hidden', sidebarColapsado));
+
+      $('icono-colapsar-sidebar').classList.toggle('fa-angles-left', !sidebarColapsado);
+      $('icono-colapsar-sidebar').classList.toggle('fa-angles-right', sidebarColapsado);
+    }
+
+    // ----------------------------- TOASTS -----------------------------
+
+    function mostrarToast(mensaje, tipo = 'exito') {
+      const estilos = {
+        exito: { fondo: 'var(--color-success-dark)', icono: 'fa-circle-check' },
+        error: { fondo: 'var(--color-danger-dark)', icono: 'fa-triangle-exclamation' }
+      };
+      const { fondo, icono } = estilos[tipo] || estilos.exito;
+
+      const toast = document.createElement('div');
+      toast.className = 'flex items-start gap-2 text-white text-xs font-medium px-4 py-3 rounded-lg shadow-lg transition-all duration-300 translate-x-6 opacity-0';
+      toast.style.background = fondo;
+      toast.innerHTML = `<i class="fa-solid ${icono} mt-0.5"></i><span>${escaparHtml(mensaje)}</span>`;
+      $('toast-container').appendChild(toast);
+
+      requestAnimationFrame(() => toast.classList.remove('translate-x-6', 'opacity-0'));
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // ----------------------------- MODALES (animación + Escape + click afuera) -----------------------------
+
+    function abrirModal(idModal) {
+      const modal = $(idModal);
+      const tarjeta = modal.querySelector('.modal-card');
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => tarjeta.classList.remove('scale-95', 'opacity-0'));
+    }
+
+    function cerrarModal(idModal) {
+      const modal = $(idModal);
+      const tarjeta = modal.querySelector('.modal-card');
+      tarjeta.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 150);
+    }
+
+    document.addEventListener('keydown', (evento) => {
+      if (evento.key !== 'Escape') return;
+      if (!$('modal-aprobar').classList.contains('hidden')) cerrarModalAprobar();
+      if (!$('modal-rechazar').classList.contains('hidden')) cerrarModalRechazar();
+      if (!$('modal-documento').classList.contains('hidden')) cerrarModalDocumento();
+    });
+
+    // ----------------------------- VISOR DE DOCUMENTOS -----------------------------
+
+    function verDocumento(url, nombreArchivo) {
+      $('documento-nombre').textContent = nombreArchivo;
+      $('documento-abrir-nueva-pestana').href = url;
+      $('documento-iframe').src = url;
+      abrirModal('modal-documento');
+    }
+
+    function cerrarModalDocumento() {
+      cerrarModal('modal-documento');
+      // Se limpia el src al cerrar para no seguir cargando/renderizando el PDF en segundo plano.
+      setTimeout(() => { $('documento-iframe').src = ''; }, 150);
+    }
+
+    // ----------------------------- TRANSICIÓN ENTRE VISTAS -----------------------------
+
+    function mostrarVista(idMostrar, idOcultar) {
+      $(idOcultar).classList.add('hidden');
+      const vista = $(idMostrar);
+      vista.classList.remove('hidden');
+      vista.classList.add('opacity-0');
+      requestAnimationFrame(() => vista.classList.remove('opacity-0'));
+    }
+
+    // ----------------------------- VISTA LISTA -----------------------------
+
+    function filaEsqueleto() {
+      return `<tr>${Array.from({ length: 7 }).map(() =>
+        '<td class="px-4 py-3"><div class="h-3.5 bg-gray-100 rounded animate-pulse"></div></td>').join('')}</tr>`;
+    }
+
+    async function cargarTodo() {
+      const cuerpo = $('cuerpo-tabla');
+      cuerpo.innerHTML = Array.from({ length: 5 }).map(filaEsqueleto).join('');
+      $('tarjetas-tabla-movil').innerHTML = '<div class="h-20 bg-gray-100 rounded-xl animate-pulse"></div>'.repeat(3);
+
+      try {
+        // Se trae todo una sola vez: los filtros, el buscador y la paginación se resuelven en el cliente.
+        const respuesta = await fetch(`${API_BASE_URL}/v1/tercero-registrations`);
+        if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
+        registrosCompletos = await respuesta.json();
+        renderizarKpis();
+        aplicarFiltrosYRenderizar();
+      } catch (error) {
+        cuerpo.innerHTML = `<tr><td colspan="7" class="text-center text-sm py-10" style="color: var(--color-danger);">
+          <i class="fa-solid fa-triangle-exclamation mr-2"></i>No se pudo cargar la lista (${escaparHtml(error.message)}).
+        </td></tr>`;
+        $('tarjetas-tabla-movil').innerHTML = '';
+        $('contenedor-kpis').innerHTML = '';
+        $('contenedor-paginacion').innerHTML = '';
+      }
+    }
+
+    function renderizarKpis() {
+      const total = registrosCompletos.length;
+      const pendientes = registrosCompletos.filter((r) => r.estado === 'REGISTRADO').length;
+      const aprobadas = registrosCompletos.filter((r) => r.estado === 'APROBADO').length;
+      const rechazadas = registrosCompletos.filter((r) => r.estado === 'RECHAZADO').length;
+
+      const porcentaje = (valor) => total > 0 ? Math.round((valor / total) * 100) : 0;
+
+      const tarjeta = (etiqueta, valor, icono, colorFondo, pct) => `
+        <div class="rounded-xl p-5 shadow-sm text-white" style="background: ${colorFondo};">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-3xl font-extrabold leading-none">${valor}</p>
+              <p class="text-[11px] text-white/80 mt-1.5 uppercase tracking-wide">${etiqueta}</p>
+            </div>
+            <div class="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center text-lg">
+              <i class="fa-solid ${icono}"></i>
+            </div>
+          </div>
+          <div class="w-full h-1.5 bg-white/20 rounded-full mt-4 overflow-hidden">
+            <div class="h-full bg-white rounded-full transition-all duration-500" style="width: ${pct}%;"></div>
+          </div>
+        </div>`;
+
+      $('contenedor-kpis').innerHTML =
+        tarjeta('Total', total, 'fa-layer-group', 'var(--color-primary)', 100) +
+        tarjeta('Pendientes', pendientes, 'fa-hourglass-half', 'var(--color-warning)', porcentaje(pendientes)) +
+        tarjeta('Aprobadas', aprobadas, 'fa-circle-check', 'var(--color-success)', porcentaje(aprobadas)) +
+        tarjeta('Rechazadas', rechazadas, 'fa-circle-xmark', 'var(--color-danger)', porcentaje(rechazadas));
+
+      document.querySelector('[data-contador="REGISTRADO"]').textContent = `(${pendientes})`;
+      document.querySelector('[data-contador="APROBADO"]').textContent = `(${aprobadas})`;
+      document.querySelector('[data-contador="RECHAZADO"]').textContent = `(${rechazadas})`;
+      document.querySelector('[data-contador="TODAS"]').textContent = `(${total})`;
+    }
+
+    function filtrarPor(estado) {
+      filtroActual = estado;
+      paginaActual = 1;
+      document.querySelectorAll('#tabs-filtro .tab-filtro').forEach((btn) => {
+        btn.classList.toggle('activo', btn.dataset.estado === estado);
+      });
+      aplicarFiltrosYRenderizar();
+    }
+
+    function onBuscar() {
+      terminoBusqueda = $('input-busqueda').value.trim().toLowerCase();
+      paginaActual = 1;
+      aplicarFiltrosYRenderizar();
+    }
+
+    function onCambiarFecha() {
+      fechaDesde = $('input-fecha-desde').value;
+      fechaHasta = $('input-fecha-hasta').value;
+      paginaActual = 1;
+      aplicarFiltrosYRenderizar();
+    }
+
+    function limpiarFiltroFecha() {
+      $('input-fecha-desde').value = '';
+      $('input-fecha-hasta').value = '';
+      fechaDesde = '';
+      fechaHasta = '';
+      paginaActual = 1;
+      aplicarFiltrosYRenderizar();
+    }
+
+    function limpiarTodosLosFiltros() {
+      terminoBusqueda = '';
+      fechaDesde = '';
+      fechaHasta = '';
+      $('input-busqueda').value = '';
+      $('input-fecha-desde').value = '';
+      $('input-fecha-hasta').value = '';
+      filtrarPor('');
+    }
+
+    function aplicarFiltrosYRenderizar() {
+      let filtrados = filtroActual ? registrosCompletos.filter((r) => r.estado === filtroActual) : registrosCompletos;
+
+      if (terminoBusqueda) {
+        filtrados = filtrados.filter((r) =>
+          (r.nombre || '').toLowerCase().includes(terminoBusqueda) ||
+          (r.numeroIdentificacion || '').toLowerCase().includes(terminoBusqueda));
+      }
+
+      // Compara solo la parte YYYY-MM-DD del ISO de fechaRegistro contra los inputs type="date":
+      // un mismo día en Desde/Hasta filtra por día, y un rango de inicio/fin de mes filtra por mes.
+      if (fechaDesde) {
+        filtrados = filtrados.filter((r) => r.fechaRegistro && r.fechaRegistro.slice(0, 10) >= fechaDesde);
+      }
+      if (fechaHasta) {
+        filtrados = filtrados.filter((r) => r.fechaRegistro && r.fechaRegistro.slice(0, 10) <= fechaHasta);
+      }
+
+      const totalPaginas = Math.max(1, Math.ceil(filtrados.length / TAMANO_PAGINA));
+      if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+
+      const inicio = (paginaActual - 1) * TAMANO_PAGINA;
+      const pagina = filtrados.slice(inicio, inicio + TAMANO_PAGINA);
+
+      renderizarTabla(pagina);
+      renderizarTarjetas(pagina);
+      renderizarPaginacion(filtrados.length, totalPaginas, inicio, pagina.length);
+    }
+
+    function estadoVacioHtml() {
+      const sinDatos = registrosCompletos.length === 0;
+      return `
+        <div class="flex flex-col items-center gap-2 py-10" style="color: var(--color-hint);">
+          <i class="fa-solid ${sinDatos ? 'fa-inbox' : 'fa-filter-circle-xmark'} text-3xl"></i>
+          <p class="text-sm font-medium text-center px-4" style="color: var(--color-text);">
+            ${sinDatos ? 'Todavía no hay solicitudes registradas.' : 'No hay solicitudes que coincidan con los filtros.'}
+          </p>
+          ${!sinDatos ? `<button onclick="limpiarTodosLosFiltros()" class="text-xs font-semibold hover:underline cursor-pointer" style="color: var(--color-primary);">Limpiar filtros</button>` : ''}
+        </div>`;
+    }
+
+    function accionesFila(registro) {
+      return `
+        ${registro.estado !== 'RECHAZADO' ? `
+          <button onclick="abrirModalRechazar('${registro.id}')" title="Rechazar" aria-label="Rechazar solicitud de ${escaparHtml(registro.nombre)}"
+            class="w-8 h-8 inline-flex items-center justify-center bg-white rounded-lg active:scale-95 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
+            style="border: 1px solid #FFC2D6; color: var(--color-danger);">
+            <i class="fa-solid fa-circle-xmark"></i>
+          </button>` : ''}
+        ${registro.estado !== 'APROBADO' ? `
+          <button onclick="abrirModalAprobar('${registro.id}')" title="Aprobar" aria-label="Aprobar solicitud de ${escaparHtml(registro.nombre)}"
+            class="w-8 h-8 inline-flex items-center justify-center btn-success-inst rounded-lg active:scale-95 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300">
+            <i class="fa-solid fa-circle-check"></i>
+          </button>` : ''}
+        <button onclick="verDetalle('${registro.id}')"
+          class="px-3 py-1.5 bg-white text-[11px] font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+          style="border: 1px solid var(--color-border); color: var(--color-text);">
+          <i class="fa-solid fa-eye" style="color: var(--color-success);"></i> Ver detalle
+        </button>`;
+    }
+
+    function renderizarTabla(registros) {
+      const cuerpo = $('cuerpo-tabla');
+      if (!registros.length) {
+        cuerpo.innerHTML = `<tr><td colspan="7">${estadoVacioHtml()}</td></tr>`;
+        return;
+      }
+
+      cuerpo.innerHTML = registros.map((registro) => `
+        <tr class="hover:bg-[#F7F9FC] transition-colors">
+          <td class="px-4 py-3 font-medium" style="color: var(--color-text);">${escaparHtml(registro.nombre)}</td>
+          <td class="px-4 py-3" style="color: var(--color-hint);">${escaparHtml(registro.numeroIdentificacion)}</td>
+          <td class="px-4 py-3" style="color: var(--color-hint);">${escaparHtml(registro.calidad)}</td>
+          <td class="px-4 py-3" style="color: var(--color-hint);">${escaparHtml(registro.tipoPersona)}</td>
+          <td class="px-4 py-3" style="color: var(--color-hint);">${formatearFecha(registro.fechaRegistro)}</td>
+          <td class="px-4 py-3">
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-medium ${CLASE_BADGE_ESTADO[registro.estado]}">${ETIQUETA_ESTADO[registro.estado]}</span>
+          </td>
+          <td class="px-4 py-3 text-right whitespace-nowrap">
+            <div class="inline-flex items-center gap-1.5">${accionesFila(registro)}</div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderizarTarjetas(registros) {
+      const contenedor = $('tarjetas-tabla-movil');
+      if (!registros.length) {
+        contenedor.innerHTML = estadoVacioHtml();
+        return;
+      }
+
+      contenedor.innerHTML = registros.map((registro) => `
+        <div class="rounded-xl p-4 shadow-xs space-y-3" style="border: 1px solid var(--color-border);">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <p class="font-semibold text-sm truncate" style="color: var(--color-text);">${escaparHtml(registro.nombre)}</p>
+              <p class="text-[11px] mt-0.5" style="color: var(--color-hint);">${escaparHtml(registro.calidad)} · ${escaparHtml(registro.tipoPersona)}</p>
+            </div>
+            <span class="shrink-0 text-[10px] px-2 py-0.5 rounded-full font-medium ${CLASE_BADGE_ESTADO[registro.estado]}">${ETIQUETA_ESTADO[registro.estado]}</span>
+          </div>
+          <p class="text-[11px]" style="color: var(--color-hint);">
+            Doc: <span class="font-medium" style="color: var(--color-text);">${escaparHtml(registro.numeroIdentificacion)}</span> · ${formatearFecha(registro.fechaRegistro)}
+          </p>
+          <div class="flex items-center gap-1.5 pt-1" style="border-top: 1px solid var(--color-border);">${accionesFila(registro)}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderizarPaginacion(totalResultados, totalPaginas, inicio, cantidadEnPagina) {
+      const contenedor = $('contenedor-paginacion');
+      if (!totalResultados) {
+        contenedor.innerHTML = '';
+        return;
+      }
+
+      const desde = inicio + 1;
+      const hasta = inicio + cantidadEnPagina;
+
+      let botonesPaginas = '';
+      for (let i = 1; i <= totalPaginas; i++) {
+        const esActual = i === paginaActual;
+        botonesPaginas += `<button onclick="irAPagina(${i})"
+          class="w-8 h-8 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${esActual ? 'text-white' : 'bg-white hover:bg-gray-50'}"
+          style="${esActual ? 'background: var(--color-primary);' : 'border: 1px solid var(--color-border); color: var(--color-hint);'}">${i}</button>`;
+      }
+
+      contenedor.innerHTML = `
+        <p class="text-xs" style="color: var(--color-hint);">Mostrando ${desde}-${hasta} de ${totalResultados} solicitudes</p>
+        <div class="flex items-center gap-1.5">
+          <button onclick="irAPagina(${paginaActual - 1})" ${paginaActual === 1 ? 'disabled' : ''}
+            class="w-8 h-8 flex items-center justify-center text-xs rounded-lg bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            style="border: 1px solid var(--color-border); color: var(--color-hint);">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          ${botonesPaginas}
+          <button onclick="irAPagina(${paginaActual + 1})" ${paginaActual === totalPaginas ? 'disabled' : ''}
+            class="w-8 h-8 flex items-center justify-center text-xs rounded-lg bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            style="border: 1px solid var(--color-border); color: var(--color-hint);">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>`;
+    }
+
+    function irAPagina(numero) {
+      paginaActual = numero;
+      aplicarFiltrosYRenderizar();
+    }
+
+    // ----------------------------- VISTA DETALLE -----------------------------
+
+    async function verDetalle(id) {
+      registroSeleccionadoId = id;
+      mostrarVista('vista-detalle', 'vista-lista');
+      $('detalle-nombre').innerHTML = '<i class="fa-solid fa-spinner fa-spin brand-primary"></i>';
+      $('detalle-campos').innerHTML = '';
+      $('detalle-documentos').innerHTML = '';
+
+      try {
+        const respuesta = await fetch(`${API_BASE_URL}/v1/tercero-registrations/${id}`);
+        if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
+        const registro = await respuesta.json();
+        renderizarDetalle(registro);
+      } catch (error) {
+        $('detalle-nombre').innerHTML = `<span class="text-sm" style="color: var(--color-danger);">No se pudo cargar el detalle (${escaparHtml(error.message)})</span>`;
+      }
+    }
+
+    function renderizarDetalle(registro) {
+      $('detalle-nombre').innerHTML = `<i class="fa-solid fa-user brand-primary"></i> ${escaparHtml(registro.nombre)}`;
+
+      const badge = $('detalle-badge-estado');
+      badge.textContent = ETIQUETA_ESTADO[registro.estado];
+      badge.className = `text-xs font-semibold px-3 py-1 rounded-full ${CLASE_BADGE_ESTADO[registro.estado]}`;
+
+      if (registro.estado === 'RECHAZADO' && registro.motivoRechazo) {
+        $('detalle-motivo-texto').textContent = registro.motivoRechazo;
+        $('detalle-motivo-rechazo').classList.remove('hidden');
+      } else {
+        $('detalle-motivo-rechazo').classList.add('hidden');
+      }
+
+      $('detalle-campos').innerHTML = CAMPOS_DETALLE.map(([clave, etiqueta]) => {
+        const valor = clave === 'fechaRegistro' ? formatearFecha(registro[clave]) : (registro[clave] || '-');
+        return `<div><dt class="text-[11px] uppercase tracking-wide" style="color: var(--color-hint);">${etiqueta}</dt><dd class="font-medium mt-0.5" style="color: var(--color-text);">${escaparHtml(valor)}</dd></div>`;
+      }).join('');
+
+      const docs = registro.documents || [];
+      $('detalle-documentos').innerHTML = docs.length
+        ? docs.map((doc) => `
+            <div class="rounded-xl p-3 flex items-center justify-between gap-3" style="border: 1px solid var(--color-border); background: var(--color-bg);">
+              <div class="flex items-center gap-2 min-w-0">
+                <i class="fa-solid fa-file-pdf shrink-0" style="color: var(--color-danger);"></i>
+                <span class="text-xs truncate" style="color: var(--color-text);">${escaparHtml(doc.fileName)}</span>
+              </div>
+              <button onclick="verDocumento('${escaparJs(doc.url)}', '${escaparJs(doc.fileName)}')"
+                class="px-3 py-1.5 bg-white text-[11px] font-semibold rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-1 shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+                style="border: 1px solid var(--color-border); color: var(--color-text);">
+                <i class="fa-solid fa-eye" style="color: var(--color-success);"></i> Ver
+              </button>
+            </div>
+          `).join('')
+        : '<p class="text-xs" style="color: var(--color-hint);">No se subió ningún documento.</p>';
+
+      // El estado se puede cambiar en cualquier momento; solo se oculta el botón que repetiría el estado actual.
+      $('btn-detalle-aprobar').classList.toggle('hidden', registro.estado === 'APROBADO');
+      $('btn-detalle-rechazar').classList.toggle('hidden', registro.estado === 'RECHAZADO');
+    }
+
+    function volverALista() {
+      mostrarVista('vista-lista', 'vista-detalle');
+      registroSeleccionadoId = null;
+      cargarTodo();
+    }
+
+    // ----------------------------- APROBAR -----------------------------
+
+    function abrirModalAprobar(id) {
+      if (id) registroSeleccionadoId = id;
+      abrirModal('modal-aprobar');
+    }
+    function cerrarModalAprobar() { cerrarModal('modal-aprobar'); }
+
+    function alTerminarAccion() {
+      // Si la acción se disparó desde el detalle, vuelve a la lista; si fue una acción rápida
+      // desde la tabla, simplemente la refresca sin cambiar de vista.
+      if (!$('vista-detalle').classList.contains('hidden')) {
+        volverALista();
+      } else {
+        cargarTodo();
+      }
+    }
+
+    async function confirmarAprobar() {
+      const boton = $('btn-confirmar-aprobar');
+      boton.disabled = true;
+      boton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+      try {
+        const respuesta = await fetch(`${API_BASE_URL}/v1/tercero-registrations/${registroSeleccionadoId}/approve`, { method: 'POST' });
+        if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
+        cerrarModalAprobar();
+        mostrarToast('Solicitud aprobada. Se notificó al tercero por correo.', 'exito');
+        alTerminarAccion();
+      } catch (error) {
+        mostrarToast('No se pudo aprobar la solicitud: ' + error.message, 'error');
+      } finally {
+        boton.disabled = false;
+        boton.innerHTML = 'Sí, aprobar';
+      }
+    }
+
+    // ----------------------------- RECHAZAR -----------------------------
+
+    function abrirModalRechazar(id) {
+      if (id) registroSeleccionadoId = id;
+      $('input-motivo-rechazo').value = '';
+      $('err-motivo-rechazo').classList.add('hidden');
+      abrirModal('modal-rechazar');
+    }
+    function cerrarModalRechazar() { cerrarModal('modal-rechazar'); }
+
+    async function confirmarRechazar() {
+      const motivo = $('input-motivo-rechazo').value.trim();
+      if (!motivo) { $('err-motivo-rechazo').classList.remove('hidden'); return; }
+
+      const boton = $('btn-confirmar-rechazar');
+      boton.disabled = true;
+      boton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+      try {
+        const respuesta = await fetch(`${API_BASE_URL}/v1/tercero-registrations/${registroSeleccionadoId}/reject`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ motivo })
+        });
+        if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
+        cerrarModalRechazar();
+        mostrarToast('Solicitud rechazada. Se notificó al tercero por correo.', 'exito');
+        alTerminarAccion();
+      } catch (error) {
+        mostrarToast('No se pudo rechazar la solicitud: ' + error.message, 'error');
+      } finally {
+        boton.disabled = false;
+        boton.innerHTML = 'Sí, rechazar';
+      }
+    }
+  </script>
+</body>
+
+</html>
